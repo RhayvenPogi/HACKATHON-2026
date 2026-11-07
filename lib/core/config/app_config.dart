@@ -1,10 +1,7 @@
-/// Runtime configuration for FLOW.
+/// Runtime configuration.
 ///
-/// Override the API base URL at run time, e.g.:
 ///   flutter run --dart-define=API_BASE_URL=http://10.0.2.2:8000
-///
-/// Default assumes a physical phone over USB with:
-///   adb reverse tcp:8000 tcp:8000
+///   flutter run --dart-define=SHARE_API_ENABLED=true   (once backend ships)
 abstract final class AppConfig {
   static const String apiBaseUrl = String.fromEnvironment(
     'API_BASE_URL',
@@ -12,4 +9,13 @@ abstract final class AppConfig {
   );
 
   static const Duration requestTimeout = Duration(seconds: 15);
+
+  /// QR-sharing backend endpoints are NOT implemented yet.
+  /// false = demo mode: QR codes are clearly labeled and unusable.
+  static const bool shareApiEnabled = bool.fromEnvironment(
+    'SHARE_API_ENABLED',
+    defaultValue: true,
+  );
+
+  static const Duration shareValidity = Duration(days: 15);
 }

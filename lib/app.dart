@@ -14,7 +14,13 @@ import 'package:muni_app/features/onboarding/screens/consent_screen.dart';
 import 'package:muni_app/features/onboarding/screens/onboarding_screen.dart';
 import 'package:muni_app/features/onboarding/screens/welcome_screen.dart';
 import 'package:muni_app/features/support/screens/crisis_support_screen.dart';
-import 'package:muni_app/shared/widgets/planned_feature_screen.dart';
+import 'package:muni_app/features/facilities/screens/facilities_screen.dart';
+import 'package:muni_app/core/config/app_config.dart';
+import 'package:muni_app/features/professional/data/professional_session_store.dart';
+import 'package:muni_app/features/professional/providers/professional_controller.dart';
+import 'package:muni_app/features/qr_sharing/data/share_repository.dart';
+import 'package:muni_app/features/qr_sharing/data/share_storage.dart';
+import 'package:muni_app/features/qr_sharing/providers/share_controller.dart';
 
 class MuniApp extends StatelessWidget {
   const MuniApp({super.key, required this.consentStorage});
@@ -30,6 +36,20 @@ class MuniApp extends StatelessWidget {
         Provider<ApiService>(
           create: (_) => ApiService(),
           dispose: (_, api) => api.close(),
+        ),
+        ChangeNotifierProvider<ShareController>(
+          create: (context) => ShareController(
+            repository: AppConfig.shareApiEnabled
+                ? ApiShareRepository(context.read<ApiService>())
+                : DemoShareRepository(),
+            storage: SecureShareStorage(),
+          )..load(),
+        ),
+        ChangeNotifierProvider<ProfessionalController>(
+          create: (context) => ProfessionalController(
+            api: context.read<ApiService>(),
+            store: SecureProfessionalSessionStore(),
+          )..load(),
         ),
       ],
       child: MaterialApp(
@@ -52,12 +72,7 @@ class MuniApp extends StatelessWidget {
                     AssessmentProvider(itemCount: dass42Items.length),
                 child: const AssessmentScreen(),
               ),
-          AppRoutes.facilities: (_) => const PlannedFeatureScreen(
-                title: 'Facility locator',
-                phase: 'Phase 6',
-                description: 'The map will show verified mental health '
-                    'facilities once facility data is available.',
-              ),
+          AppRoutes.facilities: (_) => const FacilitiesScreen(),
         },
       ),
     );

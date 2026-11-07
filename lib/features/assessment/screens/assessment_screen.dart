@@ -189,7 +189,10 @@ Future<void> _sendAssessment(BuildContext context) async {
     final result = await assessment.submit(api);
     navigator.pushReplacement(
       MaterialPageRoute<void>(
-        builder: (_) => ResultsScreen(result: result),
+        builder: (_) => ResultsScreen(
+          result: result,
+          responses: assessment.buildResponses(),
+        ),
       ),
     );
   } on ApiException catch (error) {
@@ -291,8 +294,7 @@ class _ProgressHeader extends StatelessWidget {
               value: answered / total,
               minHeight: 8,
               backgroundColor: AppColors.border,
-              semanticsLabel: 'Assessment progress',
-              semanticsValue: '$answered of $total answered',
+              semanticsLabel: 'Assessment progress: $answered of $total answered',
             ),
           ),
           const SizedBox(height: 6),

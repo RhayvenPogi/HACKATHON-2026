@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:muni_app/core/constants/app_routes.dart';
 import 'package:muni_app/core/constants/app_strings.dart';
+import 'package:muni_app/features/professional/professional_navigation.dart';
 import 'package:muni_app/core/theme/app_colors.dart';
 import 'package:muni_app/shared/widgets/app_button.dart';
 import 'package:muni_app/shared/widgets/disclaimer_banner.dart';
@@ -53,6 +54,11 @@ class WelcomeScreen extends StatelessWidget {
                       label: 'Get Started',
                       onPressed: () =>
                           Navigator.pushNamed(context, AppRoutes.onboarding),
+                    ),
+                    const SizedBox(height: 8),
+                    TextButton(
+                      onPressed: () => openProfessionalArea(context),
+                      child: const Text("I'm a mental health professional"),
                     ),
                   ],
                 ),

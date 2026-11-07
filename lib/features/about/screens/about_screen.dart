@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:muni_app/core/constants/app_routes.dart';
 import 'package:muni_app/core/services/consent_storage.dart';
 import 'package:muni_app/shared/widgets/app_button.dart';
+import 'package:muni_app/features/professional/professional_navigation.dart';
 import 'package:muni_app/shared/widgets/disclaimer_banner.dart';
 
 class AboutScreen extends StatelessWidget {
@@ -28,6 +29,11 @@ class AboutScreen extends StatelessWidget {
           TextButton(
             onPressed: () => Navigator.pop(dialogContext, true),
             child: const Text('Withdraw'),
+          ),
+          const SizedBox(height: 12),
+            TextButton(
+            onPressed: () => openProfessionalArea(context),
+            child: const Text("I'm a mental health professional"),
           ),
         ],
       ),

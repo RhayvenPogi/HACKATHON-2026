@@ -4,12 +4,16 @@ import 'package:muni_app/core/constants/app_strings.dart';
 import 'package:muni_app/shared/widgets/app_button.dart';
 import 'package:muni_app/shared/widgets/disclaimer_banner.dart';
 import 'package:muni_app/shared/widgets/info_card.dart';
+import 'package:provider/provider.dart';
+import 'package:muni_app/features/qr_sharing/providers/share_controller.dart';
+import 'package:muni_app/features/qr_sharing/screens/share_qr_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final activeShare = context.watch<ShareController>().activeShare;
     final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
@@ -85,6 +89,24 @@ class HomeScreen extends StatelessWidget {
                 'Mental Health. Tap to see the numbers.',
               ),
             ),
+            if (activeShare != null) ...[
+              InfoCard(
+                icon: Icons.qr_code_2,
+                title: 'Your shared assessment',
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute<void>(
+                    builder: (_) => const ShareQrScreen(),
+                  ),
+                ),
+                child: Text(
+                  'Active until '
+                  '${MaterialLocalizations.of(context).formatMediumDate(activeShare.expiresAt.toLocal())}. '
+                  'Tap to show the QR code.',
+                ),
+              ),
+              const SizedBox(height: 16),
+            ],
             const SizedBox(height: 16),
             const DisclaimerBanner(),
           ],

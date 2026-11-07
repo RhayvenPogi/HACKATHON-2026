@@ -1,9 +1,10 @@
 from django.test import SimpleTestCase, TestCase
 from rest_framework.test import APIClient
 
+from assessments.serializers import AssessmentRequestSerializer
 from src.dass21.scoring import ITEM_COUNT, SUBSCALE_ITEMS, assess_dass21
+from src.dass42.assessment import process_assessment
 
-URL = "/api/assessments/"
 SCALES = ("depression", "anxiety", "stress")
 
 
@@ -61,17 +62,11 @@ class Dass21ScoringTests(SimpleTestCase):
                         self.assertEqual(result[other]["score"], 0)
 
 
-class AssessmentEndpointTests(TestCase):
-    def setUp(self):
-        self.client = APIClient()
-
-    def post(self, payload):
-        return self.client.post(URL, payload, format="json")
+class ProcessAssessmentTests(SimpleTestCase):
+    """Scoring used when a citizen shares (shown to professionals only)."""
 
     def test_all_zero_returns_full_structure(self):
-        response = self.post({"responses": [0] * ITEM_COUNT})
-        self.assertEqual(response.status_code, 200)
-        data = response.json()
+        data = process_assessment([0] * ITEM_COUNT)
         self.assertEqual(data["status"], "success")
         self.assertEqual(data["instrument"], "DASS-21")
         for scale in SCALES:
@@ -82,37 +77,36 @@ class AssessmentEndpointTests(TestCase):
                 self.assertIn(key, data["guidance"][scale])
 
     def test_all_three_is_maximum_and_extremely_severe(self):
-        data = self.post({"responses": [3] * ITEM_COUNT}).json()
+        data = process_assessment([3] * ITEM_COUNT)
         for scale in SCALES:
             self.assertEqual(data["assessment"][scale]["score"], 42)
             self.assertEqual(data["assessment"][scale]["severity"], "Extremely Severe")
 
-    def test_rejects_20_responses(self):
-        self.assertEqual(self.post({"responses": [0] * 20}).status_code, 400)
-
-    def test_rejects_22_responses(self):
-        self.assertEqual(self.post({"responses": [0] * 22}).status_code, 400)
-
-    def test_rejects_old_42_item_payload(self):
-        self.assertEqual(self.post({"responses": [0] * 42}).status_code, 400)
-
-    def test_rejects_value_out_of_range(self):
-        self.assertEqual(self.post({"responses": [0] * 20 + [4]}).status_code, 400)
-
-    def test_rejects_negative_value(self):
-        self.assertEqual(self.post({"responses": [0] * 20 + [-1]}).status_code, 400)
-
-    def test_rejects_missing_field(self):
-        self.assertEqual(self.post({}).status_code, 400)
-
-    def test_rejects_booleans(self):
-        self.assertEqual(self.post({"responses": [True] * ITEM_COUNT}).status_code, 400)
+    def test_rejects_wrong_lengths_and_values(self):
+        for bad in ([0] * 20, [0] * 22, [0] * 42, [0] * 20 + [4], [0] * 20 + [-1], [True] * ITEM_COUNT):
+            with self.subTest(length=len(bad)):
+                with self.assertRaises((ValueError, TypeError)):
+                    process_assessment(bad)
 
     def test_notice_is_exact(self):
-        notice = self.post({"responses": [0] * ITEM_COUNT}).json()["notice"]
         self.assertEqual(
-            notice,
+            process_assessment([0] * ITEM_COUNT)["notice"],
             "Muni provides preliminary screening information and general "
             "guidance only. It does not diagnose or replace professional "
             "assessment.",
         )
+
+
+class AssessmentRequestSerializerTests(SimpleTestCase):
+    def test_accepts_21_and_rejects_others(self):
+        self.assertTrue(AssessmentRequestSerializer(data={"responses": [1] * 21}).is_valid())
+        for bad in ([1] * 20, [1] * 42, [1] * 20 + [4], [True] * 21):
+            with self.subTest(bad=bad[:2]):
+                self.assertFalse(AssessmentRequestSerializer(data={"responses": bad}).is_valid())
+        self.assertFalse(AssessmentRequestSerializer(data={}).is_valid())
+
+
+class PublicScoringRemovedTests(TestCase):
+    def test_public_scoring_endpoint_is_gone(self):
+        response = APIClient().post("/api/assessments/", {"responses": [0] * ITEM_COUNT}, format="json")
+        self.assertEqual(response.status_code, 404)

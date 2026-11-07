@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "assessments",
     "professionals",
     "sharing",
+    "adminportal",
 ]
 
 MIDDLEWARE = [

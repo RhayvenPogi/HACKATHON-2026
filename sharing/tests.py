@@ -14,7 +14,7 @@ from professionals.models import Professional
 from .models import ProfessionalSession, ShareAccessLog, SharedAssessment, ShareToken
 from .tokens import hash_token
 
-RESPONSES = [1] * 42
+RESPONSES = [1] * 21
 PASSWORD = "Kalmado-2026!x"
 
 
@@ -78,7 +78,7 @@ class ShareCreateTests(BaseSharingTest):
         self.assertEqual(SharedAssessment.objects.count(), 0)
 
     def test_rejects_invalid_responses(self):
-        response = self.create_share(responses=[1] * 41)
+        response = self.create_share(responses=[1] * 20)
         self.assertEqual(response.status_code, 400)
 
 
@@ -135,7 +135,7 @@ class ProfessionalOpenShareTests(BaseSharingTest):
         data = response.json()
         self.assertEqual(data["status"], "success")
         self.assertEqual(data["assessment"]["depression"]["score"], 14)
-        self.assertEqual(len(data["responses"]), 42)
+        self.assertEqual(len(data["responses"]), 21)
         self.assertEqual(response["Cache-Control"], "no-store")
         self.assertEqual(ShareAccessLog.objects.count(), 1)
 

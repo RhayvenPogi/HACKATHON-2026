@@ -59,7 +59,7 @@ GUIDANCE = {
         "recommendation": (
             "Consider reaching out to a qualified mental health "
             "professional as soon as reasonably possible. "
-            "You may use FLOW's facility locator to find support."
+            "You may use Muni's facility locator to find support."
         )
     },
 

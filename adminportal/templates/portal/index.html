@@ -1,0 +1,77 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MUNI Administrator Portal</title>
+<link rel="icon" href="{% static 'portal/assets/logo.png' %}" type="image/png">
+<link rel="stylesheet" href="{% static 'portal/style.css' %}">
+</head>
+<body>
+
+<div class="app" id="app">
+  <aside class="side" id="side" aria-label="Main navigation">
+    <div class="brand">
+      <img src="{% static 'portal/assets/logo.png' %}" alt="" class="logo">
+      <div><b>MUNI</b><small>Administrator Portal</small></div>
+    </div>
+    <nav id="nav"></nav>
+    <p class="tagline">Mental Health<br>for a Healthier Community</p>
+  </aside>
+  <div class="scrim" id="scrim"></div>
+
+  <div class="content">
+    <header class="top">
+      <button class="burger" id="burger" aria-label="Toggle sidebar" aria-expanded="true" title="Open or close sidebar"><span></span><span></span><span></span></button>
+      <div class="user">
+        <button class="user-btn" id="userBtn" aria-haspopup="true">
+          <span class="avatar">AD</span>Admin
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 4l4 4 4-4"/></svg>
+        </button>
+        <div class="menu" id="userMenu" hidden>
+          <button data-go="settings">Account Settings</button>
+          <button data-go="logout">Logout</button>
+        </div>
+      </div>
+    </header>
+    <main id="view" tabindex="-1"></main>
+  </div>
+</div>
+
+<div class="login" id="login" hidden>
+  <div class="login-shell">
+    <section class="login-art" aria-hidden="true">
+      <div>
+        <h2>Safe, verified care starts here.</h2>
+        <p>Manage the mental health professionals who connect with MUNI users in the City of San Fernando.</p>
+      </div>
+      <ul class="points">
+        <li>Verify professional credentials</li>
+        <li>Activate and deactivate accounts</li>
+        <li>No access to assessment data</li>
+      </ul>
+    </section>
+    <form class="login-form" id="loginForm">
+      <img src="{% static 'portal/assets/logo.png' %}" alt="MUNI" class="logo login-logo">
+      <h1>Welcome back</h1>
+      <p class="sub">Sign in to the MUNI Administrator Portal.</p>
+      <label>Username<input name="user" required autocomplete="username" placeholder="Enter your username"></label>
+      <label>Password
+        <span class="pw"><input id="pw" name="pass" type="password" required autocomplete="current-password" placeholder="Enter your password"><button type="button" id="pwToggle" aria-label="Show password">Show</button></span>
+      </label>
+      <label class="check"><input type="checkbox"> Keep me signed in</label>
+      <button class="btn primary big" type="submit"><span class="spin" aria-hidden="true"></span><span class="txt">Sign in</span></button>
+      <p class="fine">Authorized administrators only.</p>
+    </form>
+  </div>
+</div>
+
+<div class="modal" id="modal" hidden>
+  <div class="dialog" role="dialog" aria-modal="true" id="dialog"></div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="{% static 'portal/app.js' %}"></script>
+</body>
+</html>

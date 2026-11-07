@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MUNI – A Little Space for Your Mind</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<main class="phone" id="app">
+
+  <!-- 1 Splash -->
+  <section class="screen splash active" data-screen="splash">
+    <img class="logo" src="assets/img/logo.png" alt="MUNI – A Little Space for Your Mind.">
+    <div class="hall"></div>
+  </section>
+
+  <!-- 1b Intro: mascot pops up -->
+  <section class="screen intro" data-screen="intro">
+    <div class="hall faded"></div>
+    <h1 class="hello top">Hi, I'm Muni!</h1>
+    <div class="intro-lines" id="introLines" aria-live="polite">
+      <p class="on">I'm a little cloud with a sprout on my head.</p>
+      <p>I'll keep you company while you check in on how you feel.</p>
+      <p>No sign-up, no judgment. Just a small space for your mind.</p>
+    </div>
+    <div class="intro-ctl">
+      <div class="dots" id="introDots"></div>
+      <button class="btn dark sm" id="introNext">Next</button>
+    </div>
+    <div class="pop-wrap" id="popWrap"><img class="mascot pop-up" src="assets/img/muni-happy.png" alt="Muni the cloud waving hello"></div>
+  </section>
+
+  <!-- 2 Welcome -->
+  <section class="screen welcome" data-screen="welcome">
+    <div class="hall faded"></div>
+    <img class="mascot big float" src="assets/img/muni-calm.png" alt="Muni the cloud">
+    <div class="bottom">
+      <button class="btn dark pill" data-open="consent">Get started</button>
+      <p class="fine">No account needed. Your answers stay private.</p>
+    </div>
+    <div class="sheet-backdrop" id="consent-bd"></div>
+    <div class="sheet dark terms-sheet" id="consent" role="dialog" aria-label="Terms and Conditions">
+      <span class="grab"></span>
+      <div class="terms-head"><h2>Terms and Conditions &amp; User Consent</h2><p>A Little Space for Your Mind.</p></div>
+      <div class="terms" id="terms"></div>
+      <div class="terms-foot">
+        <button class="btn light" data-go="home" data-close="consent">I agree &amp; continue</button>
+        <button class="btn ghost" data-close="consent">Decline</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 Home -->
+  <section class="screen tab" data-screen="home">
+    <div class="scroll">
+      <header class="greet">
+        <img class="mascot sm float" src="assets/img/muni-happy.png" alt="">
+        <div><h1>Hi there, I'm Muni.</h1><p>How are you feeling today?</p></div>
+      </header>
+      <div class="chip-lock"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></svg>Just for you · No sign-up needed</div>
+      <div class="card hero">
+        <h2>Check in with yourself</h2>
+        <p>A few gentle questions to help you understand how you've been feeling. About 3 minutes.</p>
+        <div class="trio"><span><b>Mood</b>Feeling low</span><span><b>Worry</b>Stress, nerves</span><span><b>Well-being</b>Overall</span></div>
+        <button class="btn light" data-go="quiz">Start check-in</button>
+      </div>
+      <div class="duo">
+        <button class="card blue" data-go="help"><svg viewBox="0 0 24 24"><path d="M12 21s7-6.1 7-11a7 7 0 10-14 0c0 4.9 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg><h3>Find support</h3><p>Places near you in San Fernando</p></button>
+        <button class="card lav" data-go="share"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14v3M17 20h4"/></svg><h3>Share my result</h3><p>Show it to a counselor</p></button>
+      </div>
+      <div class="card latest" id="latest">
+        <div><small>Your latest check-in</small><h3 id="latest-label">Some stress</h3><small id="latest-sub">Sharing ends in 12 days</small></div>
+        <button class="btn outline sm" data-go="result">View</button>
+      </div>
+      <button class="link crisis-link" data-open="crisis">Need someone to talk to right now?</button>
+      <p class="fine center">A gentle first step, not a medical diagnosis.</p>
+    </div>
+  </section>
+
+  <!-- 4 Quiz -->
+  <section class="screen tab" data-screen="quiz">
+    <div class="scroll quiz">
+      <div class="qtop"><span>Mood check-in</span><span id="qcount">Question 1 of 9</span></div>
+      <div class="progress"><i id="qbar"></i></div>
+      <div class="tip"><img class="mascot xs" src="assets/img/muni-calm.png" alt=""><span>Take your time. There are no wrong answers.</span></div>
+      <div id="qwrap"><h2 id="qtext"></h2><div class="opts" id="qopts"></div></div>
+      <div class="qnav"><button class="btn outline" id="qback">Back</button><button class="btn dark" id="qnext" disabled>Next</button></div>
+    </div>
+  </section>
+
+  <!-- 5 Result -->
+  <section class="screen tab" data-screen="result">
+    <div class="scroll">
+      <h1 class="title">Your check-in</h1>
+      <div class="card feel" id="feel">
+        <small>How you may be feeling</small>
+        <h2 id="feel-label">Some stress</h2>
+        <div class="meter"><i></i><i></i><i></i></div>
+      </div>
+      <div class="card note"><img class="mascot xs" src="assets/img/muni-calm.png" alt=""><p id="feel-text"></p></div>
+      <div class="card next"><h3>What you can do next</h3><ul id="feel-next"></ul></div>
+      <button class="link crisis-link" data-open="crisis">Need someone to talk to right now?</button>
+      <div class="stack">
+        <button class="btn dark" data-go="help">Find help near me</button>
+        <button class="btn outline" data-go="share">Share my result</button>
+        <p class="fine center">This is a gentle first step, not a medical diagnosis.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6 Help -->
+  <section class="screen tab" data-screen="help">
+    <div class="scroll">
+      <h1 class="title">Find Help Near You</h1>
+      <input class="search" id="search" type="search" placeholder="Search a place or area" autocomplete="off">
+      <div class="chips" id="chips">
+        <button class="on" data-f="all">All</button><button data-f="hospital">Hospitals</button><button data-f="clinic">Clinics</button><button data-f="counseling">Counseling</button>
+      </div>
+      <div class="map" id="map">
+        <svg viewBox="0 0 300 200" preserveAspectRatio="none"><rect width="300" height="200" fill="#d3e4f2"/><rect x="18" y="26" width="64" height="48" rx="8" fill="#e3f0e3"/><rect x="196" y="110" width="88" height="62" rx="8" fill="#e3f0e3"/><path d="M-10 118L310 82" stroke="#fff" stroke-width="16"/><path d="M128 -10L168 210" stroke="#fff" stroke-width="16"/></svg>
+      </div>
+      <div class="card fac" id="fac"></div>
+      <p class="fine">Prefer not to share your location? Just type a place above. <em>Sample listings only.</em></p>
+    </div>
+  </section>
+
+  <!-- 7 Share -->
+  <section class="screen tab" data-screen="share">
+    <div class="scroll">
+      <h1 class="title">Share my result</h1>
+      <p class="lead">Show this code to a verified counselor so they can see your check-in. Nothing is shared until you agree.</p>
+      <div class="card consent-card" id="consent-card">
+        <label class="switch"><input type="checkbox" id="agree"><span></span>I agree to share my check-in with a counselor</label>
+        <button class="btn dark" id="gen" disabled>Create my code</button>
+      </div>
+      <div class="card qr" id="qrcard" hidden>
+        <div class="qrbox"><canvas id="qr" width="220" height="220"></canvas></div>
+        <h3>Valid for 15 days</h3>
+        <p class="fine center" id="qrexp"></p>
+        <button class="btn outline sm" id="regen">Make a new code</button>
+      </div>
+      <p class="fine center">The code holds a private link, never your answers.</p>
+    </div>
+  </section>
+
+  <!-- Bottom nav -->
+  <nav class="nav" id="nav">
+    <button data-go="home" data-tab="home"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8v9a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1z"/></svg>Home</button>
+    <button data-go="quiz" data-tab="quiz"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/></svg>Check-in</button>
+    <button data-go="help" data-tab="help"><svg viewBox="0 0 24 24"><path d="M12 21s7-6.1 7-11a7 7 0 10-14 0c0 4.9 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>Find help</button>
+    <button data-go="share" data-tab="share"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14v3M17 20h4"/></svg>Share</button>
+  </nav>
+
+  <!-- Crisis sheet -->
+  <div class="sheet-backdrop" id="crisis-bd"></div>
+  <div class="sheet light" id="crisis">
+    <span class="grab"></span>
+    <h2>You don't have to carry this alone</h2>
+    <p>If you may be in danger, please reach out City Health Office (San Fernando City, La Union)</p>
+    <a class="btn dark" href="tel:0728886915">Call (072) 888-6915</a>
+    <a class="btn outline" href="tel:09217652129">Call 0921-765-2129</a>
+    <a class="btn outline" href="tel:09153597859">Call 0915-359-7859</a>
+    <p class="fine">In immediate danger? Call 911.</p>
+    <button class="btn ghost-dark" data-close="crisis">Close</button>
+  </div>
+  <div class="toast" id="toast"></div>
+</main>
+<script src="js/terms.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

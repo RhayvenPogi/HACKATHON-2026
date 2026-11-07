@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MUNI for Professionals</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/pro.css">
+</head>
+<body>
+<main class="phone" id="app">
+
+  <!-- P1 Professional log in -->
+  <section class="screen login active" data-screen="login">
+    <div class="scroll">
+      <img class="mascot float" src="assets/img/muni-calm.png" alt="Muni the cloud">
+      <h1>MUNI for<br>Professionals</h1>
+      <p class="welcome">Welcome back. Please log in to continue.</p>
+      <form id="loginForm" novalidate>
+        <label for="email">Email</label>
+        <input id="email" type="email" placeholder="you@clinic.com" autocomplete="username">
+        <p class="err" id="emailErr" role="alert"></p>
+        <label for="pass">Password</label>
+        <div class="pw">
+          <input id="pass" type="password" placeholder="Your password" autocomplete="current-password">
+          <button type="button" id="eye" aria-label="Show password"><svg viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button>
+        </div>
+        <p class="err" id="passErr" role="alert"></p>
+        <button class="btn dark" id="loginBtn" type="submit"><span>Log in</span><i class="spin"></i></button>
+      </form>
+    </div>
+    <p class="fine foot">Only approved professionals can log in.<br>Need an account? Please contact the MUNI team.</p>
+  </section>
+
+  <!-- P2 Scan QR code -->
+  <section class="screen scan" data-screen="scan">
+    <header class="stop">
+      <h2>Scan a MUNI code</h2>
+      <button class="btn pillbtn" id="closeScan">Close</button>
+    </header>
+    <p class="ask">Ask the person to show their code, then point your camera at it.</p>
+    <div class="frame-wrap">
+      <button class="frame" id="frame" aria-label="Scanner. Tap to simulate scanning a code">
+        <i class="c tl"></i><i class="c tr"></i><i class="c bl"></i><i class="c br"></i>
+        <i class="line"></i>
+        <svg class="ok" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+      </button>
+      <p class="status" id="status">Looking for a code...</p>
+    </div>
+    <div class="scan-foot">
+      <button class="btn ghostline" id="light">Turn on light</button>
+      <p class="fine">You can only open codes that the person chose to share.</p>
+    </div>
+    <div class="glow" id="glow"></div>
+  </section>
+
+  <!-- P3 Shared check-in -->
+  <section class="screen result" data-screen="result">
+    <div class="scroll">
+      <small class="meta-top">Shared with you</small>
+      <h1 class="title">Check-in summary</h1>
+      <small class="meta-top" id="dates"></small>
+
+      <div class="card feel">
+        <small>How they may be feeling</small>
+        <h2 id="level">Some stress</h2>
+        <div class="meter" id="meter"><i></i><i></i><i></i></div>
+      </div>
+
+      <div class="card risk" id="risk" hidden>
+        <b>They noted thoughts of self-harm.</b>
+        <p>Please follow your clinic's safeguarding steps and check in with them directly.</p>
+      </div>
+
+      <div class="card answers">
+        <h3>Their answers</h3>
+        <ul class="rows" id="top"></ul>
+        <div class="more" id="moreWrap"><div class="more-in"><ul class="rows" id="rest"></ul></div></div>
+        <button class="link" id="seeAll" aria-expanded="false">See all answers</button>
+      </div>
+
+      <div class="card sugg">
+        <img class="mascot xs" src="assets/img/muni-calm.png" alt="">
+        <div><h3>Muni's first suggestions</h3><p id="sugg"></p></div>
+      </div>
+      <p class="fine center">Shared with the person's consent. Not a diagnosis.</p>
+    </div>
+    <div class="dock"><button class="btn dark" id="again">Scan another code</button></div>
+  </section>
+
+  <div class="toast" id="toast"></div>
+</main>
+<script src="js/pro.js"></script>
+</body>
+</html>

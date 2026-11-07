@@ -110,8 +110,6 @@ def generate_guidance(assessment):
     return {
         "guidance": guidance_results,
         "notice": (
-            "FLOW provides preliminary screening information "
-            "and general guidance only. It does not diagnose "
-            "or replace professional assessment."
+            "Muni provides preliminary screening information and general guidance only. It does not diagnose or replace professional assessment."
         )
     }

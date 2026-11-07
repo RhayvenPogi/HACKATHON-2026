@@ -40,6 +40,8 @@ INSTALLED_APPS = [
 
     "rest_framework",
     "assessments",
+    "professionals",
+    "sharing",
 ]
 
 MIDDLEWARE = [
@@ -126,5 +128,13 @@ STATIC_URL = 'static/'
 MAILERS = {
     'default': {
         'BACKEND': 'django.core.mail.backends.console.EmailBackend',
+    },
+}
+
+REST_FRAMEWORK = {
+    "DEFAULT_THROTTLE_RATES": {
+        "share_create": "10/hour",
+        "share_revoke": "30/hour",
+        "professional_login": "10/hour",
     },
 }

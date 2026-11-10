@@ -6,7 +6,7 @@ class ConsentStorage {
   ConsentStorage(this._prefs);
 
   /// Bump this whenever consent wording changes to re-prompt all users.
-  static const int currentConsentVersion = 1;
+  static const int currentConsentVersion = 4;
   static const String storageKey = 'consent_version_accepted';
 
   final SharedPreferences _prefs;

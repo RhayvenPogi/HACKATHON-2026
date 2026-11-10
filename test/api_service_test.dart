@@ -1,4 +1,4 @@
-  import 'dart:convert';
+﻿  import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
@@ -48,17 +48,17 @@ ApiService _serviceReturning(int status, Object body,
   );
 }
 
-AssessmentRequest _request() => AssessmentRequest(List<int>.filled(42, 0));
+AssessmentRequest _request() => AssessmentRequest(List<int>.filled(21, 0));
 
 void main() {
   group('AssessmentRequest', () {
     test('rejects wrong length', () {
-      expect(() => AssessmentRequest(List<int>.filled(41, 0)),
+      expect(() => AssessmentRequest(List<int>.filled(20, 0)),
           throwsArgumentError);
     });
 
     test('rejects values outside 0-3', () {
-      expect(() => AssessmentRequest([...List<int>.filled(41, 0), 4]),
+      expect(() => AssessmentRequest([...List<int>.filled(20, 0), 4]),
           throwsArgumentError);
     });
   });
@@ -80,7 +80,7 @@ void main() {
       expect(captured.method, 'POST');
       expect(captured.url.toString(), 'http://test.local/api/assessments/');
       expect(captured.headers['Content-Type'], contains('application/json'));
-      expect((jsonDecode(captured.body)['responses'] as List).length, 42);
+      expect((jsonDecode(captured.body)['responses'] as List).length, 21);
     });
 
     test('parses a successful response', () async {

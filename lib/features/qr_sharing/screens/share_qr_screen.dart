@@ -2,15 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:muni_app/core/services/api_exception.dart';
-import 'package:muni_app/core/theme/app_colors.dart';
 import 'package:muni_app/features/qr_sharing/providers/share_controller.dart';
 import 'package:muni_app/features/qr_sharing/widgets/share_demo_banner.dart';
 import 'package:muni_app/models/share_session.dart';
-import 'package:muni_app/shared/widgets/app_button.dart';
-import 'package:muni_app/shared/widgets/info_card.dart';
+import 'package:muni_app/shared/widgets/muni_ui.dart';
 
 class ShareQrScreen extends StatelessWidget {
-  const ShareQrScreen({super.key});
+  const ShareQrScreen({super.key, this.embedded = false});
+
+  /// True when shown as a tab in HomeScreen: no app bar, no back button.
+  final bool embedded;
 
   Future<void> _stop(BuildContext context) async {
     final controller = context.read<ShareController>();
@@ -40,7 +41,7 @@ class ShareQrScreen extends StatelessWidget {
 
     try {
       await controller.revoke();
-      navigator.pop();
+      if (!embedded) navigator.pop();
     } on ApiException catch (error) {
       messenger.showSnackBar(SnackBar(content: Text(error.userMessage)));
     }
@@ -52,16 +53,29 @@ class ShareQrScreen extends StatelessWidget {
     final session = controller.activeShare;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Shared assessment')),
+      backgroundColor: MuniColors.mint,
+      appBar: embedded
+          ? null
+          : AppBar(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              scrolledUnderElevation: 0,
+              foregroundColor: MuniColors.forest,
+            ),
       body: SafeArea(
         child: session == null
             ? const Center(
                 child: Padding(
                   padding: EdgeInsets.all(24),
                   child: Text(
-                    'You have no active shared assessment. It may have '
-                    'expired or been stopped.',
+                    'Nothing shared yet. Finish a check-in, then choose '
+                    'Share my result on your result screen. If you shared '
+                    'before, it may have expired or been stopped.',
                     textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: MuniColors.muted,
+                    ),
                   ),
                 ),
               )
@@ -75,84 +89,103 @@ class ShareQrScreen extends StatelessWidget {
     ShareController controller,
     ShareSession session,
   ) {
-    final textTheme = Theme.of(context).textTheme;
     final localizations = MaterialLocalizations.of(context);
     final remaining = session.expiresAt.difference(DateTime.now());
     final int daysLeft =
         (remaining.inMinutes / Duration.minutesPerDay).ceil().clamp(1, 15);
 
     return ListView(
-      padding: const EdgeInsets.all(20),
+      padding: EdgeInsets.fromLTRB(20, embedded ? 24 : 0, 20, 24),
       children: [
         if (session.isDemo) ...[
           const ShareDemoBanner(),
           const SizedBox(height: 16),
         ],
-        Center(
-          child: Semantics(
-            label: 'QR code for your shared assessment',
-            excludeSemantics: true,
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: AppColors.border),
-                  ),
-                  child: QrImageView(
-                    data: session.shareUrl,
-                    version: QrVersions.auto,
-                    size: 240,
-                    backgroundColor: Colors.white,
-                  ),
-                ),
-                if (session.isDemo)
-                  Transform.rotate(
-                    angle: -0.5,
-                    child: Text(
-                      'DEMO',
-                      style: TextStyle(
-                        fontSize: 64,
-                        fontWeight: FontWeight.w900,
-                        color: AppColors.error.withValues(alpha: 0.55),
+        MuniCard(
+          padding: const EdgeInsets.symmetric(vertical: 22, horizontal: 18),
+          child: Column(
+            children: [
+              Semantics(
+                label: 'QR code for your shared assessment',
+                excludeSemantics: true,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(14),
+                      decoration: BoxDecoration(
+                        color: MuniColors.off,
+                        borderRadius: BorderRadius.circular(22),
+                      ),
+                      child: QrImageView(
+                        data: session.shareUrl,
+                        version: QrVersions.auto,
+                        size: 220,
+                        backgroundColor: MuniColors.off,
+                        eyeStyle: const QrEyeStyle(
+                          eyeShape: QrEyeShape.square,
+                          color: MuniColors.forest,
+                        ),
+                        dataModuleStyle: const QrDataModuleStyle(
+                          dataModuleShape: QrDataModuleShape.square,
+                          color: MuniColors.forest,
+                        ),
                       ),
                     ),
-                  ),
-              ],
-            ),
+                    if (session.isDemo)
+                      Transform.rotate(
+                        angle: -0.5,
+                        child: Text(
+                          'DEMO',
+                          style: TextStyle(
+                            fontSize: 64,
+                            fontWeight: FontWeight.w900,
+                            color: MuniColors.crisis.withValues(alpha: 0.55),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Valid for $daysLeft ${daysLeft == 1 ? 'day' : 'days'}',
+                style: const TextStyle(
+                  fontSize: 19,
+                  fontWeight: FontWeight.w900,
+                  color: MuniColors.forest,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                'Expires '
+                '${localizations.formatMediumDate(session.expiresAt.toLocal())}',
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: MuniColors.muted,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 14),
+        const Text(
+          'Show this code to a registered mental health professional. The '
+          'code holds a private link, never your answers.',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 12,
+            height: 1.5,
+            fontWeight: FontWeight.w600,
+            color: MuniColors.muted,
           ),
         ),
         const SizedBox(height: 20),
-        Text(
-          'Show this code to a registered mental health professional.',
-          style: textTheme.titleMedium,
-          textAlign: TextAlign.center,
-        ),
-        const SizedBox(height: 8),
-        Text(
-          'Valid until '
-          '${localizations.formatMediumDate(session.expiresAt.toLocal())} '
-          '($daysLeft ${daysLeft == 1 ? 'day' : 'days'} left)',
-          textAlign: TextAlign.center,
-        ),
-        const SizedBox(height: 16),
-        const InfoCard(
-          icon: Icons.lock_outline,
-          title: 'What the code contains',
-          child: Text(
-            'Only a random link. It does not contain your answers, scores, '
-            'or name.',
-          ),
-        ),
-        const SizedBox(height: 24),
-        AppButton.secondary(
-          label: 'Stop sharing',
-          icon: Icons.block,
-          isLoading: controller.isBusy,
-          onPressed: () => _stop(context),
+        MuniButton(
+          label: controller.isBusy ? 'Stopping...' : 'Stop sharing',
+          variant: MuniButtonVariant.outline,
+          onPressed: controller.isBusy ? null : () => _stop(context),
         ),
       ],
     );

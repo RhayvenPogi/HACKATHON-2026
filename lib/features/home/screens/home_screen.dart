@@ -1,116 +1,109 @@
 import 'package:flutter/material.dart';
-import 'package:muni_app/core/constants/app_routes.dart';
-import 'package:muni_app/core/constants/app_strings.dart';
-import 'package:muni_app/shared/widgets/app_button.dart';
-import 'package:muni_app/shared/widgets/disclaimer_banner.dart';
-import 'package:muni_app/shared/widgets/info_card.dart';
 import 'package:provider/provider.dart';
+import 'package:muni_app/core/constants/app_routes.dart';
+import 'package:muni_app/features/assessment/data/dass21_items.dart';
+import 'package:muni_app/features/assessment/providers/assessment_provider.dart';
+import 'package:muni_app/features/assessment/screens/assessment_screen.dart';
+import 'package:muni_app/features/facilities/screens/facilities_screen.dart';
+import 'package:muni_app/features/home/screens/user_home_screen.dart';
 import 'package:muni_app/features/qr_sharing/providers/share_controller.dart';
 import 'package:muni_app/features/qr_sharing/screens/share_qr_screen.dart';
+import 'package:muni_app/shared/widgets/muni_ui.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final activeShare = context.watch<ShareController>().activeShare;
-    final textTheme = Theme.of(context).textTheme;
+  State<HomeScreen> createState() => _HomeScreenState();
+}
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(AppStrings.appName),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.info_outline),
+class _HomeScreenState extends State<HomeScreen> {
+  int _index = 0;
+
+  /// Tabs are built on first visit, so the map doesn't load at startup.
+  final Set<int> _opened = {0};
+
+  /// Changing this gives the quiz tab a fresh AssessmentProvider.
+  int _quizRun = 0;
+
+  void _go(int i) => setState(() {
+        _index = i;
+        _opened.add(i);
+      });
+
+  /// Called when the person returns from the result screen.
+  void _checkInFinished() => setState(() {
+        _quizRun++;
+        _index = 0;
+      });
+
+  Widget _home(BuildContext context) {
+    final activeShare = context.watch<ShareController>().activeShare;
+    final localizations = MaterialLocalizations.of(context);
+
+    return Stack(
+      children: [
+        UserHomeScreen(
+          onStartCheckIn: () => _go(1),
+          onFindHelp: () => _go(2),
+          onShare: () => _go(3),
+          latestLabel: activeShare == null ? null : 'Shared assessment',
+          latestSub: activeShare == null
+              ? null
+              : 'Active until ${localizations.formatMediumDate(activeShare.expiresAt.toLocal())}',
+          onViewLatest: () => _go(3),
+        ),
+        Positioned(
+          top: 4,
+          right: 8,
+          child: IconButton(
+            icon: const Icon(Icons.info_outline, color: MuniColors.muted),
             tooltip: 'About & privacy',
             onPressed: () => Navigator.pushNamed(context, AppRoutes.about),
           ),
-        ],
-      ),
-      body: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.all(20),
-          children: [
-            Text('Welcome to FLOW', style: textTheme.headlineMedium),
-            const SizedBox(height: 8),
-            Text(
-              'How have you been feeling lately? Take a few minutes to '
-              'check in with yourself.',
-              style: textTheme.bodyLarge,
-            ),
-            const SizedBox(height: 24),
-            InfoCard(
-              icon: Icons.assignment_outlined,
-              title: 'Mental health check-in',
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Answer the 42-item DASS questionnaire and receive '
-                    'preliminary screening results with general guidance.',
-                  ),
-                  const SizedBox(height: 16),
-                  AppButton(
-                    label: 'Start assessment',
-                    onPressed: () =>
-                        Navigator.pushNamed(context, AppRoutes.assessment),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 16),
-            InfoCard(
-              icon: Icons.location_on_outlined,
-              title: 'Find a facility',
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Locate mental health facilities and support services '
-                    'in the City of San Fernando.',
-                  ),
-                  const SizedBox(height: 16),
-                  AppButton.secondary(
-                    label: 'Open facility locator',
-                    onPressed: () =>
-                        Navigator.pushNamed(context, AppRoutes.facilities),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 16),
-            InfoCard(
-              icon: Icons.support_agent,
-              title: 'Need to talk to someone now?',
-              onTap: () =>
-                  Navigator.pushNamed(context, AppRoutes.crisisSupport),
-              child: const Text(
-                'Free, 24/7 crisis hotline from the National Center for '
-                'Mental Health. Tap to see the numbers.',
-              ),
-            ),
-            if (activeShare != null) ...[
-              InfoCard(
-                icon: Icons.qr_code_2,
-                title: 'Your shared assessment',
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute<void>(
-                    builder: (_) => const ShareQrScreen(),
-                  ),
-                ),
-                child: Text(
-                  'Active until '
-                  '${MaterialLocalizations.of(context).formatMediumDate(activeShare.expiresAt.toLocal())}. '
-                  'Tap to show the QR code.',
-                ),
-              ),
-              const SizedBox(height: 16),
-            ],
-            const SizedBox(height: 16),
-            const DisclaimerBanner(),
-          ],
         ),
+      ],
+    );
+  }
+
+  Widget _tab(int i) {
+    if (!_opened.contains(i)) return const SizedBox.shrink();
+    return switch (i) {
+      0 => _home(context),
+      1 => KeyedSubtree(
+          key: ValueKey(_quizRun),
+          child: ChangeNotifierProvider(
+            create: (_) => AssessmentProvider(itemCount: dass21Items.length),
+            child: AssessmentScreen(onFinished: _checkInFinished),
+          ),
+        ),
+      2 => const FacilitiesScreen(embedded: true),
+      _ => const ShareQrScreen(embedded: true),
+    };
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final bool keyboardOpen = MediaQuery.viewInsetsOf(context).bottom > 0;
+
+    return PopScope(
+      // Back on any other tab goes to Home; back on Home exits the app.
+      canPop: _index == 0,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) _go(0);
+      },
+      child: Scaffold(
+        backgroundColor: MuniColors.mint,
+        body: SafeArea(
+          bottom: false,
+          child: IndexedStack(
+            index: _index,
+            children: [for (var i = 0; i < 4; i++) _tab(i)],
+          ),
+        ),
+        bottomNavigationBar: keyboardOpen
+            ? null
+            : MuniBottomNav(index: _index, onTap: _go),
       ),
     );
   }

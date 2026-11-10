@@ -13,7 +13,7 @@ class SharedAssessmentView {
   factory SharedAssessmentView.fromJson(Map<String, dynamic> json) {
     final raw = json['responses'];
     if (raw is! List ||
-        raw.length != 42 ||
+        raw.length != 21 ||
         raw.any((r) => r is! int || r < 0 || r > 3)) {
       throw const FormatException('Invalid "responses".');
     }

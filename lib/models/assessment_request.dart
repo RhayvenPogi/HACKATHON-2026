@@ -11,7 +11,7 @@ class AssessmentRequest {
     }
   }
 
-  static const int itemCount = 42;
+  static const int itemCount = 21;
 
   final List<int> responses;
 

@@ -7,9 +7,11 @@ import 'package:muni_app/core/config/app_config.dart';
 import 'package:muni_app/core/services/api_exception.dart';
 import 'package:muni_app/models/assessment_request.dart';
 import 'package:muni_app/models/assessment_response.dart';
+import 'package:muni_app/models/check_in_result.dart';
 import 'package:muni_app/models/professional_session.dart';
 import 'package:muni_app/models/share_session.dart';
 import 'package:muni_app/models/shared_assessment_view.dart';
+import 'package:muni_app/models/tips_result.dart';
 
 /// Never log request bodies or responses from this class.
 /// Tokens are always sent in bodies or headers, never in URLs.
@@ -38,6 +40,19 @@ class ApiService {
 
   // ---- Citizen ----
 
+  /// Returns ONE overall indicator (low / moderate / high).
+  /// The server does not store the answers.
+  Future<CheckInResult> checkIn(AssessmentRequest request) async {
+    final response = await _send(() => _client.post(
+          _uri('/api/check-in/'),
+          headers: _jsonHeaders,
+          body: jsonEncode(request.toJson()),
+        ));
+    return _parse(response, CheckInResult.fromJson);
+  }
+
+  /// LEGACY: the /api/assessments/ endpoint was removed from the backend.
+  /// Kept only because older tests use it; remove in the Phase 8 cleanup.
   Future<AssessmentResponse> submitAssessment(AssessmentRequest request) async {
     final response = await _send(() => _client.post(
           _uri('/api/assessments/'),
@@ -45,6 +60,16 @@ class ApiService {
           body: jsonEncode(request.toJson()),
         ));
     return _parse(response, AssessmentResponse.fromJson);
+  }
+
+  /// Only the chosen topic key is sent. Never answers or scores.
+  Future<TipsResult> getTips(String topic) async {
+    final response = await _send(() => _client.post(
+          _uri('/api/tips/'),
+          headers: _jsonHeaders,
+          body: jsonEncode({'topic': topic}),
+        ));
+    return _parse(response, TipsResult.fromJson);
   }
 
   Future<ShareSession> createShare(

@@ -6,9 +6,6 @@ import 'package:muni_app/core/services/api_service.dart';
 import 'package:muni_app/core/services/consent_storage.dart';
 import 'package:muni_app/core/theme/app_theme.dart';
 import 'package:muni_app/features/about/screens/about_screen.dart';
-import 'package:muni_app/features/assessment/data/dass42_items.dart';
-import 'package:muni_app/features/assessment/providers/assessment_provider.dart';
-import 'package:muni_app/features/assessment/screens/assessment_screen.dart';
 import 'package:muni_app/features/home/screens/home_screen.dart';
 import 'package:muni_app/features/onboarding/screens/consent_screen.dart';
 import 'package:muni_app/features/onboarding/screens/onboarding_screen.dart';
@@ -26,7 +23,6 @@ class MuniApp extends StatelessWidget {
   const MuniApp({super.key, required this.consentStorage});
 
   final ConsentStorage consentStorage;
-
 
   @override
   Widget build(BuildContext context) {
@@ -67,11 +63,6 @@ class MuniApp extends StatelessWidget {
           AppRoutes.home: (_) => const HomeScreen(),
           AppRoutes.crisisSupport: (_) => const CrisisSupportScreen(),
           AppRoutes.about: (_) => const AboutScreen(),
-          AppRoutes.assessment: (_) => ChangeNotifierProvider(
-                create: (_) =>
-                    AssessmentProvider(itemCount: dass42Items.length),
-                child: const AssessmentScreen(),
-              ),
           AppRoutes.facilities: (_) => const FacilitiesScreen(),
         },
       ),

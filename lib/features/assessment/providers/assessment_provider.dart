@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:muni_app/core/services/api_service.dart';
 import 'package:muni_app/models/assessment_request.dart';
-import 'package:muni_app/models/assessment_response.dart';
+import 'package:muni_app/models/check_in_result.dart';
 
 /// Holds answers IN MEMORY ONLY. Never persist or log these values.
 class AssessmentProvider extends ChangeNotifier {
@@ -64,9 +64,10 @@ class AssessmentProvider extends ChangeNotifier {
     return List<int>.unmodifiable(_answers.cast<int>());
   }
 
-  /// Sends answers to the backend. Answers are kept if this throws,
-  /// so the user can retry.
-  Future<AssessmentResponse> submit(ApiService api) async {
+  /// Gets the ONE overall indicator from the server. The server does not
+  /// store the answers. Answers are kept here if this throws, so the user
+  /// can retry.
+  Future<CheckInResult> checkIn(ApiService api) async {
     if (_isSubmitting) {
       throw StateError('Submission already in progress.');
     }
@@ -75,7 +76,7 @@ class AssessmentProvider extends ChangeNotifier {
     _isSubmitting = true;
     notifyListeners();
     try {
-      return await api.submitAssessment(request);
+      return await api.checkIn(request);
     } finally {
       _isSubmitting = false;
       if (!_disposed) notifyListeners();

@@ -1,4 +1,4 @@
-import 'dart:convert';
+﻿import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
@@ -12,7 +12,7 @@ import 'package:muni_app/models/assessment_request.dart';
 import 'package:muni_app/models/share_session.dart';
 
 final DateTime _now = DateTime.utc(2026, 11, 7, 12);
-List<int> _responses() => List<int>.filled(42, 1);
+List<int> _responses() => List<int>.filled(21, 1);
 
 ShareSession _session(String token, {Duration validFor = const Duration(days: 15), bool demo = false}) =>
     ShareSession(
@@ -91,7 +91,7 @@ void main() {
 
     test('rejects malformed responses', () async {
       await expectLater(
-        DemoShareRepository().createShare(List<int>.filled(41, 0)),
+        DemoShareRepository().createShare(List<int>.filled(20, 0)),
         throwsArgumentError,
       );
     });
@@ -175,7 +175,7 @@ void main() {
       expect(captured.url.path, '/api/shares/');
       expect(body['consent_given'], isTrue);
       expect(body['consent_version'], 1);
-      expect((body['responses'] as List).length, 42);
+      expect((body['responses'] as List).length, 21);
       expect(s.token, 'abc');
       expect(s.isDemo, isFalse);
     });

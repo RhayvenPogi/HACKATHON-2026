@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:muni_app/core/constants/app_routes.dart';
 import 'package:muni_app/core/services/consent_storage.dart';
-import 'package:muni_app/core/theme/app_colors.dart';
-import 'package:muni_app/shared/widgets/app_button.dart';
+import 'package:muni_app/shared/widgets/muni_ui.dart';
 
 class ConsentScreen extends StatefulWidget {
   const ConsentScreen({super.key});
@@ -32,76 +31,130 @@ class _ConsentScreenState extends State<ConsentScreen> {
     navigator.pushNamedAndRemoveUntil(AppRoutes.home, (route) => false);
   }
 
+  Widget _switch(String text, bool value, ValueChanged<bool> set) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: MuniCard(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        child: Row(
+          children: [
+            Switch(
+              value: value,
+              activeTrackColor: MuniColors.leaf,
+              activeThumbColor: Colors.white,
+              onChanged: (v) => setState(() => set(v)),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                text,
+                style: const TextStyle(
+                  fontSize: 14,
+                  height: 1.35,
+                  fontWeight: FontWeight.w700,
+                  color: MuniColors.ink,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-
     return Scaffold(
-      appBar: AppBar(title: const Text('Before you begin')),
+      backgroundColor: MuniColors.mint,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        foregroundColor: MuniColors.forest,
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Please confirm the following:', style: textTheme.titleMedium),
+              const Text(
+                'Before you begin',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.w800,
+                  color: MuniColors.ink,
+                ),
+              ),
               const SizedBox(height: 8),
-              CheckboxListTile(
-                value: _understandsScreening,
-                onChanged: (v) =>
-                    setState(() => _understandsScreening = v ?? false),
-                controlAffinity: ListTileControlAffinity.leading,
-                contentPadding: EdgeInsets.zero,
-                title: const Text(
-                  'I understand that FLOW provides preliminary screening and '
-                  'general guidance, not a diagnosis.',
+              const Text(
+                'Please confirm the following:',
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  color: MuniColors.muted,
                 ),
-              ),
-              CheckboxListTile(
-                value: _understandsDataUse,
-                onChanged: (v) =>
-                    setState(() => _understandsDataUse = v ?? false),
-                controlAffinity: ListTileControlAffinity.leading,
-                contentPadding: EdgeInsets.zero,
-                title: const Text(
-                  'I understand that my questionnaire answers will be sent to '
-                  'the FLOW server to calculate my results.',
-                ),
-              ),
-              CheckboxListTile(
-                value: _isAdult,
-                onChanged: (v) => setState(() => _isAdult = v ?? false),
-                controlAffinity: ListTileControlAffinity.leading,
-                contentPadding: EdgeInsets.zero,
-                title: const Text('I am 18 years old or older.'),
-              ),
-              const SizedBox(height: 12),
-              Text(
-                'FLOW is currently designed for adults. If you are under 18, '
-                'please talk to a parent, guardian, or school guidance '
-                'counselor, or call the crisis hotline.',
-                style: textTheme.bodyMedium?.copyWith(
-                  color: AppColors.textSecondary,
-                ),
-              ),
-              const SizedBox(height: 4),
-              TextButton.icon(
-                onPressed: () =>
-                    Navigator.pushNamed(context, AppRoutes.crisisSupport),
-                icon: const Icon(Icons.support_agent),
-                label: const Text('Need help right now?'),
               ),
               const SizedBox(height: 16),
-              Text(
+              _switch(
+                'I understand that MUNI provides preliminary screening and '
+                'general guidance, not a diagnosis.',
+                _understandsScreening,
+                (v) => _understandsScreening = v,
+              ),
+              _switch(
+                'I understand that my questionnaire answers will be sent to '
+                'the MUNI server to calculate my results.',
+                _understandsDataUse,
+                (v) => _understandsDataUse = v,
+              ),
+              _switch(
+                'I am 18 years old or older.',
+                _isAdult,
+                (v) => _isAdult = v,
+              ),
+              const SizedBox(height: 4),
+              const MuniCard(
+                color: MuniColors.lav,
+                child: Text(
+                  'MUNI is currently designed for adults. If you are under '
+                  '18, please talk to a parent, guardian, or school guidance '
+                  'counselor, or call the crisis hotline.',
+                  style: TextStyle(
+                    fontSize: 13,
+                    height: 1.45,
+                    fontWeight: FontWeight.w600,
+                    color: MuniColors.ink,
+                  ),
+                ),
+              ),
+              Center(
+                child: TextButton(
+                  onPressed: () => showCrisisSheet(context),
+                  child: const Text(
+                    'Need help right now?',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w800,
+                      color: MuniColors.crisis,
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+              const Text(
                 'You can withdraw this consent at any time from '
                 'About & privacy.',
-                style: textTheme.bodyMedium,
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: MuniColors.muted,
+                ),
               ),
               const SizedBox(height: 24),
-              AppButton(
-                label: 'I agree and continue',
-                isLoading: _saving,
-                onPressed: _allChecked ? _accept : null,
+              MuniButton(
+                label: _saving ? 'Saving...' : 'I agree & continue',
+                onPressed: _allChecked && !_saving ? _accept : null,
               ),
             ],
           ),

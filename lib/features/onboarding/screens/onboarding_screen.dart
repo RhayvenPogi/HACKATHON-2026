@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:muni_app/core/constants/app_routes.dart';
-import 'package:muni_app/core/theme/app_colors.dart';
-import 'package:muni_app/shared/widgets/app_button.dart';
+import 'package:muni_app/shared/widgets/muni_ui.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -18,7 +17,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     _OnboardingPageData(
       icon: Icons.assignment_outlined,
       title: 'A structured check-in',
-      body: 'FLOW uses the DASS-42, a 42-item questionnaire covering three '
+      body: 'MUNI uses the DASS-42, a 42-item questionnaire covering three '
           'areas: depression, anxiety, and stress. Most people finish it in '
           '10 to 15 minutes.',
     ),
@@ -32,7 +31,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     _OnboardingPageData(
       icon: Icons.lock_outline,
       title: 'Your privacy',
-      body: 'Your answers are sent to the FLOW server only to calculate your '
+      body: 'Your answers are sent to the MUNI server only to calculate your '
           'results. Sharing your results with a mental health professional '
           'will always require your explicit permission.',
     ),
@@ -62,9 +61,23 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: MuniColors.mint,
       appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        foregroundColor: MuniColors.forest,
         actions: [
-          TextButton(onPressed: _goToConsent, child: const Text('Skip')),
+          TextButton(
+            onPressed: _goToConsent,
+            child: const Text(
+              'Skip',
+              style: TextStyle(
+                fontWeight: FontWeight.w800,
+                color: MuniColors.muted,
+              ),
+            ),
+          ),
         ],
       ),
       body: SafeArea(
@@ -82,7 +95,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             _PageDots(count: _pages.length, current: _page),
             Padding(
               padding: const EdgeInsets.all(24),
-              child: AppButton(
+              child: MuniButton(
                 label: _isLastPage ? 'Continue' : 'Next',
                 onPressed: _next,
               ),
@@ -113,32 +126,41 @@ class _OnboardingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-
     return Center(
       child: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 28),
         child: Column(
           children: [
-            Container(
-              padding: const EdgeInsets.all(24),
-              decoration: const BoxDecoration(
-                color: AppColors.infoBackground,
-                shape: BoxShape.circle,
+            Floating(
+              child: Container(
+                padding: const EdgeInsets.all(28),
+                decoration: const BoxDecoration(
+                  color: MuniColors.chip,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(data.icon, size: 52, color: MuniColors.forest),
               ),
-              child: Icon(data.icon, size: 48, color: AppColors.primary),
             ),
             const SizedBox(height: 28),
             Text(
               data.title,
-              style: textTheme.headlineMedium,
               textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 26,
+                fontWeight: FontWeight.w900,
+                color: MuniColors.forest,
+              ),
             ),
             const SizedBox(height: 16),
             Text(
               data.body,
-              style: textTheme.bodyLarge,
               textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 16,
+                height: 1.5,
+                fontWeight: FontWeight.w600,
+                color: MuniColors.muted,
+              ),
             ),
           ],
         ),
@@ -162,13 +184,14 @@ class _PageDots extends StatelessWidget {
         children: List.generate(count, (index) {
           final bool active = index == current;
           return AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
+            duration: const Duration(milliseconds: 450),
+            curve: Curves.easeOutCubic,
             margin: const EdgeInsets.symmetric(horizontal: 4),
-            width: active ? 24 : 8,
+            width: active ? 26 : 8,
             height: 8,
             decoration: BoxDecoration(
-              color: active ? AppColors.primary : AppColors.border,
-              borderRadius: BorderRadius.circular(4),
+              color: active ? MuniColors.forest : const Color(0xFFCFE0D4),
+              borderRadius: BorderRadius.circular(8),
             ),
           );
         }),

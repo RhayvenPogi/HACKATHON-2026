@@ -1,4 +1,4 @@
-import 'dart:convert';
+﻿import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
@@ -42,7 +42,7 @@ Map<String, dynamic> _openBody() {
       'stress': guide('Normal'),
     },
     'notice': 'n',
-    'responses': List<int>.filled(42, 0),
+    'responses': List<int>.filled(21, 0),
     'shared_at': '2026-11-07T04:00:00+00:00',
     'expires_at': '2026-11-22T04:00:00+00:00',
   };
@@ -131,7 +131,7 @@ void main() {
       expect(captured.url.path, '/api/professional/shares/open/');
       expect(captured.url.toString(), isNot(contains(_token)));
       expect(jsonDecode(captured.body)['token'], _token);
-      expect(view.responses.length, 42);
+      expect(view.responses.length, 21);
     });
 
     test('validation errors expose server messages', () async {

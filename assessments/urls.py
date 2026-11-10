@@ -1,5 +1,9 @@
-# Option A (DASS authors' FAQ 9 and 21): citizens are never shown computed
-# scores or automated interpretation, so there is no public scoring endpoint.
-# Answers are scored only when shared (sharing app) and shown to the
-# signed-in professional.
-urlpatterns = []
+from django.urls import path
+
+from .views import CheckInView
+
+# Citizens get ONE overall indicator only. Subscale scores are shown only to
+# professionals, through sharing. The old /api/assessments/ endpoint is gone.
+urlpatterns = [
+    path("check-in/", CheckInView.as_view(), name="check-in"),
+]

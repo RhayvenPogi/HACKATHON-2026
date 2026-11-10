@@ -328,3 +328,19 @@ nav button[aria-current=page] svg,nav button:hover svg{color:var(--forest)}
   .points{display:none}
   .login-form{padding:28px 24px}
 }
+/* ===== Portal integration ===== */
+.form-error{color:var(--rej);font-weight:600;font-size:14px}
+.field-errors{margin:6px 0 0;padding-left:18px;color:var(--rej);font-size:14px}
+.btn:disabled,.btn:disabled:hover{opacity:.55;cursor:not-allowed;transform:none;box-shadow:none}
+.temp-pw{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:16px 0;padding:14px 16px;border:1px dashed var(--leaf);border-radius:14px;background:var(--pend-bg)}
+.temp-pw code{font-size:20px;font-weight:700;letter-spacing:1px;color:var(--forest);word-break:break-all}
+.dialog .fine{text-align:left;margin-top:4px}
+.chart-axis{font-size:11px;fill:var(--muted)}
+
+/* ===== Facilities map ===== */
+.fac-map{height:380px;border-top:1px solid var(--line);isolation:isolate}
+.pick-map{height:260px;border-radius:14px;border:1px solid var(--line);isolation:isolate;margin-top:4px}
+.leaflet-container{font:inherit;z-index:0}
+.map-hint{font-size:13px;color:var(--muted);font-weight:400}
+.check-row{display:flex;gap:18px;flex-wrap:wrap}
+.check-row .check{margin:0}

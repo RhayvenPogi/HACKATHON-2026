@@ -19,6 +19,11 @@ class Professional(models.Model):
         GUIDANCE_COUNSELOR = "guidance_counselor", "Guidance Counselor"
         OTHER = "other", "Other"
 
+    class Verification(models.TextChoices):
+        PENDING = "pending", "Pending verification"
+        VERIFIED = "verified", "Verified"
+        REJECTED = "rejected", "Rejected"
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
@@ -39,6 +44,11 @@ class Professional(models.Model):
     contact_number = models.CharField(max_length=20, blank=True)
     is_active = models.BooleanField(default=True)
     must_change_password = models.BooleanField(default=True)
+    verification_status = models.CharField(
+        max_length=10,
+        choices=Verification.choices,
+        default=Verification.VERIFIED,
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -54,5 +64,9 @@ class Professional(models.Model):
 
     @property
     def can_receive_shared_assessments(self):
-        """Phase 7 backend will check this before honoring a QR token."""
-        return self.is_active and self.user.is_active and self.license_is_current
+        return (
+            self.verification_status == self.Verification.VERIFIED
+            and self.is_active
+            and self.user.is_active
+            and self.license_is_current
+        )

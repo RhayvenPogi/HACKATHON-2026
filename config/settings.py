@@ -45,6 +45,8 @@ INSTALLED_APPS = [
     "professionals",
     "sharing",
     "adminportal",
+    "facilities",
+    "tips",
 ]
 
 MIDDLEWARE = [

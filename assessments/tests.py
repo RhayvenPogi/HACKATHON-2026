@@ -110,3 +110,33 @@ class PublicScoringRemovedTests(TestCase):
     def test_public_scoring_endpoint_is_gone(self):
         response = APIClient().post("/api/assessments/", {"responses": [0] * ITEM_COUNT}, format="json")
         self.assertEqual(response.status_code, 404)
+
+
+
+
+class CheckInIndicatorTests(TestCase):
+    URL = "/api/check-in/"
+
+    def post(self, responses):
+        return APIClient().post(self.URL, {"responses": responses}, format="json")
+
+    def test_returns_only_overall_indicator(self):
+        response = self.post([0] * ITEM_COUNT)
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(set(data), {"status", "indicator", "notice"})
+        self.assertEqual(data["indicator"], "low")
+
+    def test_levels_follow_highest_subscale(self):
+        cases = [
+            (answers_for(depression=6), "low"),        # Mild
+            (answers_for(anxiety=6), "moderate"),      # Moderate
+            (answers_for(stress=13), "high"),          # Severe
+            (answers_for(depression=4, anxiety=10), "high"),  # Extremely Severe wins
+        ]
+        for responses, expected in cases:
+            with self.subTest(expected=expected):
+                self.assertEqual(self.post(responses).json()["indicator"], expected)
+
+    def test_rejects_invalid_answers(self):
+        self.assertEqual(self.post([0] * 20).status_code, 400)

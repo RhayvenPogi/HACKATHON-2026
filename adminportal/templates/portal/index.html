@@ -1,16 +1,16 @@
-{% load static %}
-<!DOCTYPE html>
+{% load static %}<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>MUNI Administrator Portal</title>
 <link rel="icon" href="{% static 'portal/assets/logo.png' %}" type="image/png">
+<link rel="stylesheet" href="{% static 'portal/vendor/leaflet/leaflet.css' %}">
 <link rel="stylesheet" href="{% static 'portal/style.css' %}">
 </head>
 <body>
 
-<div class="app" id="app">
+<div class="app" id="app" hidden>
   <aside class="side" id="side" aria-label="Main navigation">
     <div class="brand">
       <img src="{% static 'portal/assets/logo.png' %}" alt="" class="logo">
@@ -26,7 +26,7 @@
       <button class="burger" id="burger" aria-label="Toggle sidebar" aria-expanded="true" title="Open or close sidebar"><span></span><span></span><span></span></button>
       <div class="user">
         <button class="user-btn" id="userBtn" aria-haspopup="true">
-          <span class="avatar">AD</span>Admin
+          <span class="avatar" id="avatar">AD</span><span id="userName">Admin</span>
           <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 4l4 4 4-4"/></svg>
         </button>
         <div class="menu" id="userMenu" hidden>
@@ -60,7 +60,8 @@
       <label>Password
         <span class="pw"><input id="pw" name="pass" type="password" required autocomplete="current-password" placeholder="Enter your password"><button type="button" id="pwToggle" aria-label="Show password">Show</button></span>
       </label>
-      <label class="check"><input type="checkbox"> Keep me signed in</label>
+      <label class="check"><input type="checkbox" name="remember"> Keep me signed in</label>
+      <p class="form-error" id="loginError" role="alert" hidden></p>
       <button class="btn primary big" type="submit"><span class="spin" aria-hidden="true"></span><span class="txt">Sign in</span></button>
       <p class="fine">Authorized administrators only.</p>
     </form>
@@ -72,6 +73,7 @@
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
+<script src="{% static 'portal/vendor/leaflet/leaflet.js' %}"></script>
 <script src="{% static 'portal/app.js' %}"></script>
 </body>
 </html>
